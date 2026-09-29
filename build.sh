@@ -10,8 +10,13 @@ echo "--> [1/3] Upgrading pip and installing Python dependencies..."
 python -m pip install --upgrade pip
 pip install -r requirements.txt
 
-echo "--> [2/3] Verifying and initializing baseline model weights..."
-python scripts/train_all.py --synthetic --epochs 5
+echo "--> [2/3] Verifying baseline model weights..."
+if [ ! -f "models/bias_correction.pkl" ] || [ ! -f "models/regime_classifier.pkl" ] || [ ! -f "models/spatiotemporal_weights.pt" ] || [ "$RETRAIN_MODELS" = "true" ]; then
+    echo "Model weights missing or retraining requested. Training baseline models..."
+    python scripts/train_all.py --synthetic --epochs 5
+else
+    echo "Pre-trained model weights verified in models/. Skipping re-training."
+fi
 
 echo "--> [3/3] Checking frontend distribution..."
 if [ ! -d "frontend/dist" ] || [ "$REBUILD_FRONTEND" = "true" ]; then

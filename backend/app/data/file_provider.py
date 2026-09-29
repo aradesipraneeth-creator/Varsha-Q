@@ -3,10 +3,11 @@ VARSHA-Q File Ingestion Provider
 Supports research file uploads in NetCDF, Parquet, CSV, or GeoJSON format.
 Validates file sizes, checks schemas, and extracts meteorological variables.
 """
+from __future__ import annotations
 from pathlib import Path
 import pandas as pd
 import numpy as np
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, Tuple
 from .provider_base import WeatherDataProvider
 
 
