@@ -2,10 +2,11 @@
 VARSHA-Q Quantum-Inspired Evolutionary Optimizer (QEA) & Pipeline Integration
 Implements Q-bit amplitude representation and quantum rotation gates for multi-parameter continuous/discrete search.
 """
+from __future__ import annotations
 import time
 import math
 import numpy as np
-from typing import Dict, Any, List, Optional, Callable
+from typing import Dict, Any, List, Optional, Callable, Tuple
 from .quantum_annealer import QUBOFeatureSelector, SimulatedQuantumAnnealer, ClassicalSimulatedAnnealer
 
 
