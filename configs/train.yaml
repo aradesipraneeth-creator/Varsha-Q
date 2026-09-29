@@ -1,0 +1,48 @@
+# VARSHA-Q Training & Optimization Configuration
+project:
+  name: "VARSHA-Q"
+  team: "QUANTUM LEAPERS"
+  version: "1.0.0"
+
+device: "auto" # 'auto', 'cuda', 'cpu'
+
+data:
+  demo_samples_per_regime: 150
+  sequence_length: 6
+  num_districts: 37
+  val_split: 0.2
+  random_seed: 42
+
+lnn_model:
+  input_dim: 8
+  hidden_dim: 32
+  num_layers: 2
+  learning_rate: 0.003
+  epochs: 25
+  batch_size: 16
+  dt: 0.5
+
+gnn_model:
+  node_in_dim: 7
+  hidden_dim: 32
+  num_layers: 2
+  learning_rate: 0.005
+  epochs: 25
+  dropout: 0.1
+
+regime_classifier:
+  n_estimators: 100
+  max_depth: 8
+  min_samples_leaf: 2
+
+correction_models:
+  learning_rate: 0.07
+  n_estimators: 80
+  max_depth: 4
+
+quantum_optimizer:
+  trotter_replicas: 8
+  sweeps: 120
+  gamma_initial: 2.5
+  gamma_final: 0.01
+  temperature: 0.1

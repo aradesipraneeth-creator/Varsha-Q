@@ -1,0 +1,6 @@
+VARSHA-Q Demonstration Run Output
+Scenario: OROGRAPHIC
+Regime: OROGRAPHIC (Confidence: 1.0)
+Raw NWP RMSE: 28.14 mm -> Corrected RMSE: 7.504 mm (73.3% reduction)
+CSI @ 25mm: 0.688
+Simulated Quantum Annealing Energy Delta: -0.0573
