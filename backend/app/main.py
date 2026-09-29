@@ -56,19 +56,54 @@ app.add_middleware(
 app.include_router(api_router)
 app.include_router(ws_router)
 
+# Resolve paths for frontend distribution (single-service Render deployment)
+from pathlib import Path
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse, JSONResponse
 
-@app.get("/")
-async def root():
-    return {
-        "project": settings.PROJECT_NAME,
-        "title": settings.FULL_TITLE,
-        "team": settings.TEAM_NAME,
-        "problem_statement": settings.PROBLEM_STATEMENT,
-        "docs_url": "/docs",
-        "api_status": "/api/system/status",
-        "latest_forecast": "/api/forecast/latest",
-        "health": "/health"
-    }
+ROOT_DIR = Path(__file__).resolve().parent.parent.parent
+FRONTEND_DIST = ROOT_DIR / "frontend" / "dist"
+
+if FRONTEND_DIST.exists():
+    assets_dir = FRONTEND_DIST / "assets"
+    if assets_dir.exists():
+        app.mount("/assets", StaticFiles(directory=str(assets_dir)), name="assets")
+
+    @app.get("/")
+    async def serve_index():
+        index_file = FRONTEND_DIST / "index.html"
+        if index_file.exists():
+            return FileResponse(index_file)
+        return JSONResponse({"detail": "Frontend build not found"}, status_code=404)
+
+    @app.get("/{full_path:path}")
+    async def serve_spa(full_path: str):
+        # Do not intercept API, docs, or WebSocket requests
+        if full_path.startswith("api/") or full_path.startswith("ws/") or full_path in ("health", "docs", "openapi.json"):
+            return JSONResponse({"detail": "Not Found"}, status_code=404)
+
+        candidate = FRONTEND_DIST / full_path
+        if full_path and candidate.is_file():
+            return FileResponse(candidate)
+
+        index_file = FRONTEND_DIST / "index.html"
+        if index_file.exists():
+            return FileResponse(index_file)
+
+        return JSONResponse({"detail": "Frontend index.html not found"}, status_code=404)
+else:
+    @app.get("/")
+    async def root():
+        return {
+            "project": settings.PROJECT_NAME,
+            "title": settings.FULL_TITLE,
+            "team": settings.TEAM_NAME,
+            "problem_statement": settings.PROBLEM_STATEMENT,
+            "docs_url": "/docs",
+            "api_status": "/api/system/status",
+            "latest_forecast": "/api/forecast/latest",
+            "health": "/health"
+        }
 
 
 if __name__ == "__main__":
